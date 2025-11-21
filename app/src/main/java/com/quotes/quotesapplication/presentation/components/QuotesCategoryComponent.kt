@@ -34,11 +34,13 @@ import com.quotes.quotesapplication.ui.theme.Typography
 
 @Preview(showBackground = true)
 @Composable
-fun QuotesCategoryComponent(modifier: Modifier = Modifier,title:String= "Life",color:Color=Color.Red,   icon: ImageVector=Icons.Default.Favorite) {
+fun QuotesCategoryComponent(modifier: Modifier = Modifier,title:String= "Life",color:Color=Color.Red,   icon: ImageVector=Icons.Default.Favorite,onClick:(String)-> Unit) {
 
     Card(
         modifier = Modifier.width(80.dp).background(Color.Transparent)
-            .clip(RoundedCornerShape(8.dp)).clickable { },
+            .clip(RoundedCornerShape(8.dp)).clickable {
+                onClick(title)
+            },
         colors = CardDefaults.cardColors(
             containerColor = color.copy(.1f) // 🔴 semi-transparent red background
         )) {

@@ -2,6 +2,7 @@ package com.quotes.quotesapplication.presentation.components
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,7 +40,7 @@ import com.quotes.quotesapplication.ui.theme.Normal12
 
 @Preview(showBackground = true)
 @Composable()
-fun QuotesCard(modifier: Modifier = Modifier, item: Quote){
+fun QuotesCard(modifier: Modifier = Modifier, item: Quote,onSavedClick:(Int)-> Unit){
 
     Card(modifier = Modifier.width(200.dp).height(200.dp).clip(RoundedCornerShape(8.dp)),)
     {
@@ -65,8 +66,8 @@ fun QuotesCard(modifier: Modifier = Modifier, item: Quote){
                 Icon(
                     Icons.Default.Favorite,
                     contentDescription = "ic_share",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                    tint =if(item.isSaved) Color.Red else Color.White,
+                    modifier = Modifier.size(24.dp).clickable { onSavedClick(item.id) }
                 )
 
 
@@ -101,6 +102,6 @@ fun QuotesCard(modifier: Modifier = Modifier, item: Quote){
 @Preview(showBackground = true)
 @Composable
 fun showView(){
-    QuotesCard(modifier= Modifier, Quote.getQuotes().get(0))
+    QuotesCard(modifier= Modifier, Quote.getQuotes().get(0), onSavedClick ={})
 
 }

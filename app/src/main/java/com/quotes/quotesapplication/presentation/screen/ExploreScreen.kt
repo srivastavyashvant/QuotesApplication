@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
@@ -35,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quotes.quotesapplication.data.QuoteCategory
 import com.quotes.quotesapplication.presentation.components.SpacerWeight1f
-import com.quotes.quotesapplication.ui.theme.Bold18
 import com.quotes.quotesapplication.ui.theme.Normal12
 import com.quotes.quotesapplication.ui.theme.Typography
 import androidx.compose.foundation.lazy.items
@@ -44,16 +42,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.quotes.quotesapplication.data.Quote
+import com.quotes.quotesapplication.presentation.components.QuotesDetailCard
 import com.quotes.quotesapplication.util.toCamelCase
 
 
 @Preview
 @Composable
-fun ExploreScreen() {
-    var selectedCategory by remember { mutableStateOf<String?>(null) }
+fun ExploreScreen(category: String?, type: String?) {
+    var selectedCategory by remember { mutableStateOf<String?>(category) }
 
+    val filteredQuotesList = Quote.getQuotes().filter { type.isNullOrBlank()|| it.type== type }
 
     val categories = QuoteCategory.entries.toList()
+   // val filteredCatogoryList = categories.filter { category == null || it.displayName == category.toUpperCase() }
+
     LazyColumn(modifier = Modifier.fillMaxSize().background(Color.White).padding(16.dp)) {
 
 
@@ -74,7 +76,8 @@ fun ExploreScreen() {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(categories) {item->
-                    val isSelected = selectedCategory == item.name
+                    val isSelected = selectedCategory.equals(item.name, ignoreCase = true)
+
                     Box(
                         modifier = Modifier
                             .background(if (isSelected) Color.Blue else Color.White, RoundedCornerShape(8.dp))
@@ -95,67 +98,69 @@ fun ExploreScreen() {
         }
 
 
-        val filteredQuotes = Quote.getQuotes().filter { quote ->
-            selectedCategory == null || quote.category.name == selectedCategory
+        val filteredQuotes = filteredQuotesList.filter { quote ->
+            selectedCategory.isNullOrBlank() ||
+                    quote.category.name.equals(selectedCategory, ignoreCase = true)
         }
 
         items(filteredQuotes){ item->
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .padding(top = 16.dp, start = 4.dp, end = 4.dp, bottom = 4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White // proper background
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Color.White
-                        ).padding(12.dp),
-                ) {
-
-                    Row {
-
-                        Surface (modifier = Modifier.size(32.dp).clip(CircleShape).background(Color.Blue)){
-                            Icon( imageVector = Icons.Default.ThumbUp,
-                                contentDescription = "",
-                                modifier = Modifier.padding(8.dp),
-                                tint = Color.Blue)
-                        }
-
-
-                        SpacerWeight1f()
-                        Text(
-                            text = item.category.displayName,
-                            color = Color.Black,
-                            style = Typography.bodyMedium
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = item.text,
-                        color = Color.Black,
-                        style = Typography.bodyMedium
-                    )
-
-                    Spacer(modifier = Modifier.padding(4.dp))
-
-                    Text(
-                        text = item.author,
-                        color = Color.Black,
-                        style = Typography.Normal12,
-                        fontStyle = FontStyle.Italic
-                    )
-
-                }
-            }
+            QuotesDetailCard(item)
+//            Card(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .clip(RoundedCornerShape(8.dp))
+//                    .padding(top = 16.dp, start = 4.dp, end = 4.dp, bottom = 4.dp),
+//                colors = CardDefaults.cardColors(
+//                    containerColor = Color.White // proper background
+//                ),
+//                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+//            ) {
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(
+//                            Color.White
+//                        ).padding(12.dp),
+//                ) {
+//
+//                    Row {
+//
+//                        Surface (modifier = Modifier.size(32.dp).clip(CircleShape).background(Color.Blue)){
+//                            Icon( imageVector = Icons.Default.ThumbUp,
+//                                contentDescription = "",
+//                                modifier = Modifier.padding(8.dp),
+//                                tint = Color.Blue)
+//                        }
+//
+//
+//                        SpacerWeight1f()
+//                        Text(
+//                            text = item.category.displayName,
+//                            color = Color.Black,
+//                            style = Typography.bodyMedium
+//                        )
+//                    }
+//
+//                    Spacer(modifier = Modifier.height(16.dp))
+//
+//                    Text(
+//                        text = item.text,
+//                        color = Color.Black,
+//                        style = Typography.bodyMedium
+//                    )
+//
+//                    Spacer(modifier = Modifier.padding(4.dp))
+//
+//                    Text(
+//                        text = item.author,
+//                        color = Color.Black,
+//                        style = Typography.Normal12,
+//                        fontStyle = FontStyle.Italic
+//                    )
+//
+//                }
+//            }
         }
 
 

@@ -1,11 +1,13 @@
 package com.quotes.quotesapplication.data
 
-data class Quote(val id: Int,
-                 val text: String,
-                 val author: String,
-                 val category: QuoteCategory,
-                 val avatar: String = "👤",
-                 val type: String="Normal"
+data class Quote(
+    val id: Int,
+    val text: String,
+    val author: String,
+    val category: QuoteCategory,
+    val avatar: String = "👤",
+    val type: String = "Normal",
+    var isSaved : Boolean= false
 ) {
     companion object {
         fun getQuotes(): List<Quote> {

@@ -27,12 +27,14 @@ import com.quotes.quotesapplication.presentation.components.SectionHeader
 import com.quotes.quotesapplication.ui.theme.Bold20
 import com.quotes.quotesapplication.ui.theme.Normal14
 import androidx.compose.foundation.lazy.items
+import com.quotes.quotesapplication.QuotesApplication
 import com.quotes.quotesapplication.data.Quote
+import kotlinx.coroutines.channels.ticker
 
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit) {
+fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(categoryId: String? , type: String?)-> Unit) {
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
 
@@ -63,25 +65,9 @@ fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit
             }
         }
 
-
-//        item {
-//            Spacer(modifier= Modifier.height(16.dp))
-//
-//            Box(modifier= Modifier.fillMaxWidth().padding(16.dp,0.dp,16.dp,0.dp).height(160.dp).clip(RoundedCornerShape(16.dp)).background(Color.Yellow)){
-//
-//                AsyncImage(
-//                    model = "https://i.pinimg.com/736x/1a/fd/3f/1afd3f3fd73871816c92cf7cdbbd449f.jpg",
-//                    contentDescription = "Banner",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.fillMaxSize()
-//
-//                    )
-//            }
-//        }
-
         item {
             SectionHeader("Latest Quotes","View All", onNavigate = {
-                  onNavigateToExplore("Yashvant")
+                  onNavigateToExplore(null,"Latest")
             })
         }
 
@@ -94,7 +80,16 @@ fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit
 
                 items(Quote.getQuotes().filter { it.type=="Latest" }){ item->
 
-                    QuotesCard(modifier,item)
+                    QuotesCard(modifier,item, onSavedClick = {
+                        if(item.isSaved){
+                            item.isSaved= false
+                            QuotesApplication.savedQuotes.remove(item)
+                        }else{
+                            item.isSaved= true
+                            QuotesApplication.savedQuotes.add(item)
+                        }
+
+                    })
 
                 }
             }
@@ -106,7 +101,7 @@ fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit
 
             item {
                 SectionHeader("Categories ", "View All", onNavigate = {
-
+                    onNavigateToExplore(null,null)
                 })
             }
 
@@ -122,7 +117,12 @@ fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit
                         QuotesCategoryComponent(
                             title = category.displayName,
                             color = category.bgColor,
-                            icon = category.icon
+                            icon = category.icon,
+                            onClick = {
+                                selectedCategory->
+                                onNavigateToExplore(selectedCategory,null)
+
+                            }
                         )
                     }
 
@@ -132,7 +132,7 @@ fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit
         }
         item {
             SectionHeader("Trending Quotes","View All", onNavigate = {
-                onNavigateToExplore("Yashvant")
+                onNavigateToExplore(null, "Trending")
             })
         }
 
@@ -145,7 +145,15 @@ fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit
 
                 items(Quote.getQuotes().filter { it.type=="Trending" }){ item->
 
-                    QuotesCard(modifier,item)
+                    QuotesCard(modifier,item, onSavedClick = {
+                        if(item.isSaved){
+                            item.isSaved= false
+                            QuotesApplication.savedQuotes.remove(item)
+                        }else{
+                            item.isSaved= true
+                            QuotesApplication.savedQuotes.add(item)
+                        }
+                    })
 
                 }
             }
@@ -156,6 +164,11 @@ fun HomeScreen(modifier: Modifier = Modifier,onNavigateToExplore:(String)-> Unit
 
 @Preview(showBackground = true)
 @Composable
-fun showUi(){
-HomeScreen(modifier = Modifier,{})
+fun showUi() {
+    HomeScreen(
+        modifier = Modifier,
+        onNavigateToExplore = { categoryId, type ->
+            // Preview does nothing
+        }
+    )
 }
